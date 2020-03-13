@@ -72,7 +72,7 @@ open class CharacterSetLimitedTextField: UITextField, UITextFieldDelegate {
 
     override open func shouldChangeText(in range: UITextRange, replacementText text: String) -> Bool {
         // it's probably "delete"
-        guard !text.isEmpty else { return true }
+        guard !text.isEmpty && !text.isNewline else { return true }
 
         let trimmedText = text.trimmingCharacters(in: invertedAllowedCharacterSet)
 
@@ -115,5 +115,11 @@ open class CharacterSetLimitedTextField: UITextField, UITextFieldDelegate {
         else {
             return true
         }
+    }
+}
+
+private extension String {
+    var isNewline: Bool {
+        count == 1 && first?.isNewline ?? false
     }
 }
