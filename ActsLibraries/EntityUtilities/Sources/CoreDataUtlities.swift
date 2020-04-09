@@ -71,7 +71,7 @@ public extension NSManagedObjectContext {
 /// Default implementation of ModelBuildingEntity for NSManagedObject
 public extension ModelBuildingEntity where StorageDriver: CoreDataStorageDriver, Self: CoreDataEntity {
 
-    static func getOrMake(from model: Model, in driver: CoreDataStorageDriver) throws -> Self {
+    static func getOrMake(from model: Model, in driver: NSManagedObjectContext) throws -> Self {
         let item: Self = try driver.findObject(for: model.id)
         item.update(from: model)
         return item
@@ -79,7 +79,7 @@ public extension ModelBuildingEntity where StorageDriver: CoreDataStorageDriver,
 }
 
 /// Default implementation of ModelBuildingEntity for NSManagedObject that also has relationships.
-public extension RelationalEntity where StorageDriver: CoreDataStorageDriver, Self: CoreDataEntity, Self: ModelUpdatable {
+public extension RelationalEntity where StorageDriver: NSManagedObjectContext, Self: CoreDataEntity, Self: ModelUpdatable {
 
     static func getOrMake(from model: Model, in context: StorageDriver) throws -> Self {
         let item: Self = try context.findObject(for: model.id)
