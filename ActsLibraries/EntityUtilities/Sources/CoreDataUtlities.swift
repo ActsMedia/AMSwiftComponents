@@ -9,7 +9,7 @@
 #if canImport(CoreData)
 import CoreData
 
-public typealias CoreDataEntity = NSManagedObject & IdentifiableEntity
+public protocol CoreDataEntity: NSManagedObject & IdentifiableEntity where ID: CVarArg {}
 /// CoreData specific definitions for an EntityDriver
 public protocol CoreDataStorageDriver: EntityStorageDriver {
 
@@ -40,9 +40,9 @@ public extension NSManagedObjectContext {
         case noIdentifier
     }
 
-    func findObject<T: NSManagedObject>(for identifier: T.ID?) throws -> T where T: IdentifiableEntity {
+    func findObject<T: CoreDataEntity>(for identifier: T.ID?) throws -> T {
         guard let identifier = identifier else { throw EntityError.noIdentifier }
-        let predicate = NSPredicate(format: "T.entityName = %@", [identifier])
+        let predicate = NSPredicate(format: "T.entityName = %@", identifier)
         let request = NSFetchRequest<T>(entityName:T.entityName)
         request.predicate = predicate;
 
