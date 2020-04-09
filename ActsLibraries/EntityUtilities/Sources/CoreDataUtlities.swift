@@ -20,8 +20,7 @@ public protocol CoreDataStorageDriver: EntityStorageDriver {
     func allObjects<T: NSManagedObject>(of type: T.Type) throws -> [T]
 }
 
-public extension NSManagedObject {
-
+extension NSManagedObject {
     /// Convenience property to get the entity's name
     @objc static var entityName: String { return String(describing: self) }
 }
@@ -38,11 +37,12 @@ public extension NSManagedObjectContext {
     enum EntityError: Error {
         case itemNotFound
         case noIdentifier
+        case couldNotCreateNewEntity
     }
 
     func findObject<T: CoreDataEntity>(for identifier: T.ID?) throws -> T {
         guard let identifier = identifier else { throw EntityError.noIdentifier }
-        let predicate = NSPredicate(format: "T.entityName = %@", identifier)
+        let predicate = NSPredicate(format: "\(T.idPropertyName) = %@", identifier)
         let request = NSFetchRequest<T>(entityName:T.entityName)
         request.predicate = predicate;
 
@@ -72,7 +72,17 @@ public extension NSManagedObjectContext {
 public extension ModelBuildingEntity where StorageDriver: CoreDataStorageDriver, Self: CoreDataEntity {
 
     static func getOrMake(from model: Model, in driver: NSManagedObjectContext) throws -> Self {
-        let item: Self = (try? driver.findObject(for: model.id)) ?? Self()
+        let item: Self = try {
+            if let foundItem: Self = try? driver.findObject(for: model.id) {
+                return foundItem
+            }
+            else if let newItem = NSEntityDescription.insertNewObject(forEntityName: entityName, into: driver) as? Self {
+                return newItem
+            }
+            else {
+                throw NSManagedObjectContext.EntityError.couldNotCreateNewEntity
+            }
+        }()
         item.update(from: model)
         return item
     }
@@ -82,7 +92,17 @@ public extension ModelBuildingEntity where StorageDriver: CoreDataStorageDriver,
 public extension RelationalEntity where StorageDriver: NSManagedObjectContext, Self: CoreDataEntity, Self: ModelUpdatable {
 
     static func getOrMake(from model: Model, in driver: StorageDriver) throws -> Self {
-        let item: Self = (try? driver.findObject(for: model.id)) ?? Self()
+        let item: Self = try {
+            if let foundItem: Self = try? driver.findObject(for: model.id) {
+                return foundItem
+            }
+            else if let newItem = NSEntityDescription.insertNewObject(forEntityName: entityName, into: driver) as? Self {
+                return newItem
+            }
+            else {
+                throw NSManagedObjectContext.EntityError.couldNotCreateNewEntity
+            }
+        }()
         item.update(from: model)
         try item.updateRelationships(from: model, in: driver)
         return item
