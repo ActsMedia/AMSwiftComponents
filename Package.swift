@@ -29,7 +29,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "2.1.0")),
         .package(url: "https://github.com/Quick/Nimble.git", .exact("8.0.2")),
-        .package(url: "https://github.com/onevcat/Kingfisher.git", .upToNextMajor(from: "5.9.0")),
+        .package(url: "https://github.com/onevcat/Kingfisher.git", .exact("5.13.2")),
         .package(url: "https://github.com/GottaGetSwifty/SwiftyIB.git", .branch("SPM")),
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
