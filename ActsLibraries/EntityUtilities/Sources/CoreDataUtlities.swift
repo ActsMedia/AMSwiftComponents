@@ -22,7 +22,7 @@ public protocol CoreDataStorageDriver: EntityStorageDriver {
 
 public extension NSManagedObject {
 
-    /// Convenience property to get the entity's nameeD
+    /// Convenience property to get the entity's name
     @objc static var entityName: String { return String(describing: self) }
 }
 
@@ -72,7 +72,7 @@ public extension NSManagedObjectContext {
 public extension ModelBuildingEntity where StorageDriver: CoreDataStorageDriver, Self: CoreDataEntity {
 
     static func getOrMake(from model: Model, in driver: NSManagedObjectContext) throws -> Self {
-        let item: Self = try driver.findObject(for: model.id)
+        let item: Self = (try? driver.findObject(for: model.id)) ?? Self()
         item.update(from: model)
         return item
     }
@@ -81,10 +81,10 @@ public extension ModelBuildingEntity where StorageDriver: CoreDataStorageDriver,
 /// Default implementation of ModelBuildingEntity for NSManagedObject that also has relationships.
 public extension RelationalEntity where StorageDriver: NSManagedObjectContext, Self: CoreDataEntity, Self: ModelUpdatable {
 
-    static func getOrMake(from model: Model, in context: StorageDriver) throws -> Self {
-        let item: Self = try context.findObject(for: model.id)
+    static func getOrMake(from model: Model, in driver: StorageDriver) throws -> Self {
+        let item: Self = (try? driver.findObject(for: model.id)) ?? Self()
         item.update(from: model)
-        try item.updateRelationships(from: model, in: context)
+        try item.updateRelationships(from: model, in: driver)
         return item
     }
 }
