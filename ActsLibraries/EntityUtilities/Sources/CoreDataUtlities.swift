@@ -14,8 +14,8 @@ public typealias CoreDataEntity = NSManagedObject & IdentifiableEntity
 public protocol CoreDataStorageDriver: EntityStorageDriver {
 
     /// Returns
-    func findObject<T: CoreDataEntity>(for identifier: T.ID) throws -> T
-    func findObjects<T: CoreDataEntity>(for identifiers: [T.ID]) throws -> [T]
+    func findObject<T: CoreDataEntity>(for identifier: T.ID?) throws -> T
+    func findObjects<T: CoreDataEntity>(for identifiers: [T.ID]?) throws -> [T]
 
     func allObjects<T: NSManagedObject>(of type: T.Type) throws -> [T]
 }
@@ -37,9 +37,11 @@ public extension NSManagedObjectContext {
 
     enum EntityError: Error {
         case itemNotFound
+        case noIdentifier
     }
 
-    func findObject<T: NSManagedObject>(for identifier: T.ID) throws -> T where T: IdentifiableEntity {
+    func findObject<T: NSManagedObject>(for identifier: T.ID?) throws -> T where T: IdentifiableEntity {
+        guard let identifier = identifier else { throw EntityError.noIdentifier }
         let predicate = NSPredicate(format: "T.entityName = %@", [identifier])
         let request = NSFetchRequest<T>(entityName:T.entityName)
         request.predicate = predicate;
@@ -54,7 +56,8 @@ public extension NSManagedObjectContext {
         }
     }
 
-    func findObjects<T: CoreDataEntity>(for identifiers: [T.ID]) throws -> [T] {
+    func findObjects<T: CoreDataEntity>(for identifiers: [T.ID]?) throws -> [T] {
+        guard let identifiers = identifiers else { throw EntityError.noIdentifier }
         let request = NSFetchRequest<T>.init(entityName: T.entityName)
         request.predicate = NSPredicate(format: "\(T.idPropertyName) IN %@", identifiers)
         return try fetch(request)
