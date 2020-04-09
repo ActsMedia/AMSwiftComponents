@@ -20,7 +20,7 @@ public protocol CoreDataStorageDriver: EntityStorageDriver {
     func allObjects<T: NSManagedObject>(of type: T.Type) throws -> [T]
 }
 
-extension NSManagedObject {
+public extension NSManagedObject {
     /// Convenience property to get the entity's name
     @objc static var entityName: String { return String(describing: self) }
 }
