@@ -27,10 +27,8 @@ public protocol ModelUpdatable {
 public protocol ModelBuildingEntity: IdentifiableEntity & ModelUpdatable where Model: Identifiable, Model.ID == Self.ID {
     
     associatedtype StorageDriver: EntityStorageDriver
-    static func getOrMake(from model: Model, in driver: StorageDriver) throws -> Self?
+    static func getOrMake(from model: Model, in driver: StorageDriver) throws -> Self
 }
-
-
 
 /// An extension of ModelBuildingEntity for Entities that also have relationships to update.
 public protocol RelationalEntity: ModelBuildingEntity {
