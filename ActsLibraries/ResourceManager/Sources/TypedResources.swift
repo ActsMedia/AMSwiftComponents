@@ -8,13 +8,20 @@
 
 import Foundation
 
+// MARK: - Protocols -
+
+/// Type Erased TypedResource
 public protocol AnyTypedResource: FileResource { }
 
+/// Generic protocol for a Resource that can be decoded into Type. Currently only using JSONDecoder.
 public protocol TypedResource: AnyTypedResource {
     associatedtype Model: Codable
     func decodeModel() throws -> Model
     var decoder: JSONDecoder { get }
 }
+
+
+// MARK: - Types -
 
 /// A Resource wrapper for a JSON Backed Codable Model
 /// Used for resources with both a bundled and remote version of the data
@@ -60,6 +67,7 @@ public struct BundleTypedResource<Model: Codable>: TypedResource, BundleResource
     }
 }
 
+// MARK: - TypedResource extensions -
 
 public extension TypedResource where Self: BundledRemoteResource {
     /// Decodes the related model prefering the file, then bundle, then remote URL
