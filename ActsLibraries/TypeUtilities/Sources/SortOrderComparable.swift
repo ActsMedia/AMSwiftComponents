@@ -12,7 +12,7 @@ public protocol SortOrderComparable: Comparable {
 }
 
 public protocol SortOrderOptionalComparable: Comparable {
-    var sortOrder: Int? { get }
+    var sortOrder: Int? { get }/
 }
 
 extension SortOrderOptionalComparable {

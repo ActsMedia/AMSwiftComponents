@@ -8,14 +8,17 @@
 import Foundation
 
 public protocol FileResource {
+    /// The URL where the File should be saved locally
     var fileURL: URL { get }
 }
 
 public protocol RemoteResource: FileResource {
+    /// The URL where the resources is available online
     var remoteURL: URL { get }
 }
 
 public protocol BundleResource: FileResource {
+    /// The URL for a Bundled resource
     var bundleURL: URL { get }
 }
 
