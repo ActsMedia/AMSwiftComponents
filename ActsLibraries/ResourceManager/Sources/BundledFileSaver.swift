@@ -13,15 +13,14 @@ public class BundledFileSaver {
 
     private let dispatch = DispatchQueue(label: "BundleFileSaver", qos: .default)
 
-    let resource: [BundleResource]
-    let copyPolicy: CopyPolicy
+    let resource: [(BundleResource, CopyPolicy)]
+//    let copyPolicy: CopyPolicy
     let completionQueue: DispatchQueue
     private let progressQueue = DispatchQueue(label: "BundledFileSaverUpdateQueue", qos: .background)
     private var errors: [Error] = []
 
-    public init(resource: [BundleResource], copyPolicy: CopyPolicy = .onlyWhenNew, completionQueue: DispatchQueue = .main) {
+    public init(resource: [(BundleResource, CopyPolicy)], completionQueue: DispatchQueue = .main) {
         self.resource = resource
-        self.copyPolicy = copyPolicy
         self.completionQueue = completionQueue
     }
 
@@ -51,7 +50,7 @@ public class BundledFileSaver {
         queue.underlyingQueue = dispatch
         queue.maxConcurrentOperationCount = 8
         let operations = resource.map {
-            FileCopyOperation(bundleResource: $0, copyPolicy: copyPolicy, errorAction: addError)
+            FileCopyOperation(bundleResource: $0.0, copyPolicy: $0.1, errorAction: addError)
         }
 
         queue.addOperations(operations, waitUntilFinished: true)

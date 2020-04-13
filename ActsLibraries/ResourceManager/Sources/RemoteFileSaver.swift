@@ -12,16 +12,14 @@ import Foundation
 public class RemoteFileSaver {
 
     private let dispatch = DispatchQueue(label: "RemoteFileSaver", qos: .default)
-    let resource: [RemoteResource]
-    let copyPolicy: CopyPolicy
+    let resource: [(RemoteResource, CopyPolicy)]
     let completionQueue: DispatchQueue
     private let progressQueue = DispatchQueue(label: "RemoteFileSaverUpdateQueue", qos: .background)
     private var errors: [Error] = []
     private let updateAction: ((URL, Float) -> ())?
 
-    public init(resource: [RemoteResource], copyPolicy: CopyPolicy = .onlyWhenNew, completionQueue: DispatchQueue = .main, updateAction: ((URL, Float) -> ())? = nil) {
+    public init(resource: [(RemoteResource, CopyPolicy)], completionQueue: DispatchQueue = .main, updateAction: ((URL, Float) -> ())? = nil) {
         self.resource = resource
-        self.copyPolicy = copyPolicy
         self.completionQueue = completionQueue
         self.updateAction = updateAction
     }
@@ -59,7 +57,7 @@ public class RemoteFileSaver {
         queue.underlyingQueue = dispatch
         queue.maxConcurrentOperationCount = 8
         let operations = resource.map {
-            FileDownloadOperation(remoteResource: $0, copyPolicy: copyPolicy, errorAction: addError(error:), updateAction: sendUpdate)
+            FileDownloadOperation(remoteResource: $0.0, copyPolicy: $0.1, errorAction: addError(error:), updateAction: sendUpdate)
         }
 
         queue.addOperations(operations, waitUntilFinished: true)
