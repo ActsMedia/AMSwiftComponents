@@ -42,6 +42,7 @@ public class RemoteFileSaver {
     }
 
     public func cancel() {
+        canceling = true
         runningQueue?.cancelAllOperations()
     }
 
@@ -50,7 +51,11 @@ public class RemoteFileSaver {
         DispatchQueue.global().async {
             self.runOperations()
             completionQueue.async {
-                if let error = self.errors.first {
+                if self.canceling {
+                    self.resource.forEach{try? $0.0.deleteSavedFile() }
+                    completion(.success(()))
+                }
+                else if let error = self.errors.first {
                     completion(.failure(error))
                 }
                 else {
