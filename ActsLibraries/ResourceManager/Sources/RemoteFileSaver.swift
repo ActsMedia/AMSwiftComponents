@@ -18,23 +18,31 @@ public class RemoteFileSaver {
     private var errors: [Error] = []
     private let updateAction: ((URL, Float) -> ())?
 
+    private var canceling = false
+    private var runningQueue: OperationQueue?
+
     public init(resource: [(RemoteResource, CopyPolicy)], completionQueue: DispatchQueue = .main, updateAction: ((URL, Float) -> ())? = nil) {
         self.resource = resource
         self.completionQueue = completionQueue
         self.updateAction = updateAction
     }
 
-    func addError(error: Error) {
+    private func addError(error: Error) {
         progressQueue.async {
             self.errors.append(error)
         }
     }
 
     private func sendUpdate(_ request: URLRequest, _ ratio: Float) {
+        guard !canceling else { return }
         guard let updateAction = updateAction, let url = request.url else { return }
         completionQueue.async {
             updateAction(url, ratio)
         }
+    }
+
+    public func cancel() {
+        runningQueue?.cancelAllOperations()
     }
 
     public func downloadResources(completionQueue: DispatchQueue = .main, _ completion: @escaping (Result<Void, Error>) -> ()) {
@@ -53,14 +61,15 @@ public class RemoteFileSaver {
     }
 
     private func runOperations() {
-        let queue = OperationQueue()
-        queue.underlyingQueue = dispatch
-        queue.maxConcurrentOperationCount = 8
+        let newQueue = OperationQueue()
+
+        newQueue.underlyingQueue = dispatch
+        newQueue.maxConcurrentOperationCount = 8
         let operations = resource.map {
             FileDownloadOperation(remoteResource: $0.0, copyPolicy: $0.1, errorAction: addError(error:), updateAction: sendUpdate)
         }
-
-        queue.addOperations(operations, waitUntilFinished: true)
+        self.runningQueue = newQueue
+        newQueue.addOperations(operations, waitUntilFinished: true)
     }
 }
 

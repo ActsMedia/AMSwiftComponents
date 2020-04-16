@@ -9,11 +9,15 @@ import Foundation
 
 open class ProgressDownloader: NSObject, URLSessionDownloadDelegate {
 
-    public static func download(remoteURL: URL, progressAction: ((_ request: URLRequest, _ ratio: Float) -> ())?, completion: @escaping (Result<URL, Error>) -> ()) {
-        ProgressDownloader(urlRequest: URLRequest(url: remoteURL), progressAction: progressAction, completion: completion).download()
+    public static func download(remoteURL: URL, progressAction: ((_ request: URLRequest, _ ratio: Float) -> ())?, completion: @escaping (Result<URL, Error>) -> ()) -> ProgressDownloader {
+        let downloader = ProgressDownloader(urlRequest: URLRequest(url: remoteURL), progressAction: progressAction, completion: completion)
+        downloader.download()
+        return downloader
     }
-    public static func download(request: URLRequest, progressAction: ((_ request: URLRequest, _ ratio: Float) -> ())?, completion: @escaping (Result<URL, Error>) -> ()) {
-        ProgressDownloader(urlRequest: request, progressAction: progressAction, completion: completion).download()
+    public static func download(request: URLRequest, progressAction: ((_ request: URLRequest, _ ratio: Float) -> ())?, completion: @escaping (Result<URL, Error>) -> ()) -> ProgressDownloader {
+        let downloader = ProgressDownloader(urlRequest: request, progressAction: progressAction, completion: completion)
+        downloader.download()
+        return downloader
     }
     public enum ProgressDownloadError: Error {
         case wasCanceled

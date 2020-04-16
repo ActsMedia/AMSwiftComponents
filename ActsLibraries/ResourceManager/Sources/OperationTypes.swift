@@ -43,6 +43,7 @@ internal class FileDownloadOperation: AsyncOperation {
     private let copyPolicy: CopyPolicy
     private let errorAction: (Error) -> ()
     private let updateAction: ((_ reqest: URLRequest, _ completedRatio: Float) -> ())?
+    private var downloader: ProgressDownloader?
 
     init(remoteURL: URL,
          destinationURL: URL,
@@ -62,7 +63,7 @@ internal class FileDownloadOperation: AsyncOperation {
             completion()
             return
         }
-        ProgressDownloader.download(remoteURL: remoteURL, progressAction: updateAction) { (result) in
+        downloader = ProgressDownloader.download(remoteURL: remoteURL, progressAction: updateAction) { (result) in
             defer { completion() }
 
             switch result {
@@ -79,6 +80,11 @@ internal class FileDownloadOperation: AsyncOperation {
                 }
             }
         }
+    }
+
+    override func cancel() {
+        super.cancel()
+        downloader?.cancel()
     }
 }
 

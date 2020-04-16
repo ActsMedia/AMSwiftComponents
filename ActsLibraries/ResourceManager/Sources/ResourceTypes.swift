@@ -68,8 +68,17 @@ public struct BundledRemoteResourceInfo: BundledRemoteResource {
             return nil
         }
         self.init(remoteURL: remoteURL, fileURL: fileURL, bundleURL: bundleURL)
-//        self.remoteURL = remoteURL
-//        self.fileURL = fileURL
-//        self.bundleURL = bundle
+    }
+}
+
+public protocol RemoteResourceable {
+    func asRemoteResource() -> RemoteResource?
+}
+
+public extension FileResource {
+    var fileIsSaved: Bool { FileManager.default.fileExists(atPath: fileURL.path) }
+
+    func deleteSavedFile() throws {
+        try FileManager.default.removeItem(at: fileURL)
     }
 }
