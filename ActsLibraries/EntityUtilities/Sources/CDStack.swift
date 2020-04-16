@@ -25,7 +25,7 @@ public class CDStack
 
     /// Returns a child context from the main thread context. This context resolves merge issues by favoring what's in memory, so whatever you change in this context will win even if a different context has saved something else.
     public func makeBackgroundContext() -> NSManagedObjectContext {
-        let parent = context
+        let parent = _context
         let childContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         childContext.parent = parent
         let mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
