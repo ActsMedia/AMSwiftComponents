@@ -13,6 +13,8 @@ public protocol DeepLinkable {
     ///   - pathComponents: Path componentes from the url (e.g. *domain*/component1/component2
     ///   - queryItems: Query items from the URL (e.g. *domain/component*?query1=1&query2=2
     init?(from pathComponents: [String], and queryItems: [(String, String?)])
+
+    var asDeepLink: URL { get }
 }
 
 /// Handles both web URLs and custom URL Schemes. E.g.
