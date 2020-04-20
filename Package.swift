@@ -10,18 +10,11 @@ let package = Package(
     ],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
-        .library(
-            name: "IBViews",
-            targets: ["IBViews"]),
-        .library(
-            name: "MediaViewer",
-            targets: ["MediaViewer"]),
-        .library(
-            name: "ResourceManager",
-            targets: ["ResourceManager"]),
-        .library(
-            name: "GenericTable",
-            targets: ["GenericTable"]),
+        .library(name: "IBViews", targets: ["IBViews"]),
+        .library(name: "MediaViewer", targets: ["MediaViewer"]),
+        .library(name: "ResourceManager", targets: ["ResourceManager"]),
+        .library(name: "GenericTable", targets: ["GenericTable"]),
+        .library(name: "EZShare", targets: ["EZShare"]),
         .library(name: "TypeUtilities", targets: ["TypeUtilities"]),
         .library(name: "UIWrappers", targets: ["UIWrappers"]),
         .library(name: "EntityUtilities", targets: ["EntityUtilities"])
@@ -41,6 +34,10 @@ let package = Package(
             name: "GenericTable",
             dependencies: ["SwiftyIB"],
             path: "ActsLibraries/GenericTable/Sources"),
+        .target(
+            name: "EZShare",
+            dependencies: [],
+            path: "ActsLibraries/EZShare/Sources"),
         .target(
             name: "IBViews",
             dependencies: ["UIWrappers"],
