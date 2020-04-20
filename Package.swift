@@ -38,6 +38,10 @@ let package = Package(
             name: "EZShare",
             dependencies: [],
             path: "ActsLibraries/EZShare/Sources"),
+        .testTarget(
+            name: "EZShareTests",
+            dependencies: ["EZShare", "Quick", "Nimble"],
+            path: "ActsLibraries/EZShare/Tests"),
         .target(
             name: "IBViews",
             dependencies: ["UIWrappers"],
