@@ -83,10 +83,16 @@ public class EZShareProvider: UIActivityItemProvider {
     public override var item: Any { shareableItem.item }
 
 
-    public init(shareableItem: EZShareItem) {
-        self.shareableItem = shareableItem
+    public init(shareItem: EZShareItem) {
+        self.shareableItem = shareItem
         super.init(placeholderItem: shareableItem.placeholder)
     }
+
+    convenience public init(shareableItem: EZShareable) {
+        self.init(shareItem: shareableItem.shareItem)
+    }
+
+
 
     public override func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
         guard let activityType = activityType else { return item }

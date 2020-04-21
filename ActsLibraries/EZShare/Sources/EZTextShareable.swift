@@ -60,7 +60,7 @@ public struct EZTextShareable: EZShareable {
     public static var defaultHTMLFormatter: (EZTextShareable) -> String = {
         return """
         \($0.preItemsText.htmlText)
-        \($0.items.reduce("\n", {$0 + "\($1.htmlText)\n"}))
+        \($0.items.reduce("\n<br/>\n", {$0 + "\($1.htmlText)\n<br/>\n"}))
         \($0.postItemsText.htmlText)
         """
     }
