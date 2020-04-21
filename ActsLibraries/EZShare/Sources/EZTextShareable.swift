@@ -51,7 +51,7 @@ public struct EZTextShareable: EZShareable {
 
     public static var defaultPlainTextFormatter: (EZTextShareable) -> String = {
         var text = $0.preItemsText.plainText.isEmpty ? "" : "\($0.preItemsText.plainText)\n"
-        text += "\($0.items.reduce("\n", {$0 + "\($1.plainText)"}))"
+        text += "\($0.items.reduce("", {$0 + "\($1.plainText)"}))"
         text += !$0.postItemsText.plainText.isEmpty ? "" : "\n\($0.postItemsText.plainText)"
         return text
     }
@@ -59,7 +59,7 @@ public struct EZTextShareable: EZShareable {
     public static var defaultHTMLFormatter: (EZTextShareable) -> String = {
 
         var text = $0.preItemsText.htmlText.isEmpty ? "" : "\($0.preItemsText.htmlText)\n<br/>"
-        text += "\($0.items.reduce("\n<br/>\n", {$0 + "\($1.htmlText)\n<br/>\n"}))"
+        text += "\($0.items.reduce("", {$0 + "\($1.htmlText)\n<br/>\n"}))"
         text += !$0.postItemsText.htmlText.isEmpty ? "" : "\n<br/>\n\($0.postItemsText.htmlText)"
         return text
     }
