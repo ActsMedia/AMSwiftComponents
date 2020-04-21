@@ -53,7 +53,7 @@ public struct EZTextShareable: EZShareable {
         return """
         \($0.preItemsText.plainText)
         \($0.items.reduce("\n", {$0 + "\($1.plainText)\n"}))
-        \($0.postItemsText.htmlText)
+        \($0.postItemsText.plainText)
         """
     }
 
