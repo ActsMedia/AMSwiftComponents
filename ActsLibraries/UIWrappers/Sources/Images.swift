@@ -23,6 +23,14 @@ public enum ImageType: Equatable {
 
     @available(iOS 13.0, macOS 10.15, *)
     public static let placeholder: ImageType = .image(placeholderImage)
+
+    static func urlOrPlaceholder(from urlString: String?) -> ImageType {
+        urlString.map { urlOrPlaceholder(from: URL(string: $0)) } ?? .placeholder
+    }
+
+    static func urlOrPlaceholder(from url: URL?) -> ImageType {
+        url.map(ImageType.url) ?? .placeholder
+    }
 }
 
 extension UIImageView {
