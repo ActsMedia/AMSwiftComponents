@@ -92,7 +92,8 @@ internal class FileDownloadOperation: AsyncOperation {
 private extension CopyPolicy {
     func copy(fileExists: Bool, startingURL: URL, destinationURL: URL) throws {
         if !fileExists {
-            try FileManager.default.createDirectory(at: destinationURL, withIntermediateDirectories: true, attributes: [:])
+            let directoryURL = destinationURL.deletingLastPathComponent()
+            try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: [:])
         }
 
         switch self {
