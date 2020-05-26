@@ -8,6 +8,7 @@
 import CoreData
 import Foundation
 
+
 /// A class to manage the boilerplate for a CoreData database
 public class CDStack
 {
@@ -154,7 +155,7 @@ extension CDStack {
     public struct Settings {
         /// The default database name. Used for tracking the sqlite file, write ahead log, seed database, and Xcode model file (xcdatamodeld). The title must match for all these files.
         public let databaseModelName: String
-        /// On first load, which to seed the database. Requires a {coreDataModelName}.sqlite file in the bundle.
+        /// On first load, which to seed the database. Requires a {databaseModelName}.sqlite file in the bundle.
         public let shouldSeed: Bool
 
         /// The Bundle where the database momd is found

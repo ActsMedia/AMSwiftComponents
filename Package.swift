@@ -74,5 +74,6 @@ let package = Package(
             name: "EntityUtilities",
             dependencies: [],
             path: "ActsLibraries/EntityUtilities/Sources"),
-    ]
+    ],
+    swiftLanguageVersions: [.v5]
 )

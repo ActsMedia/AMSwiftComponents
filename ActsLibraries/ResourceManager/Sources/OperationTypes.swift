@@ -92,13 +92,18 @@ internal class FileDownloadOperation: AsyncOperation {
 private extension CopyPolicy {
     func copy(fileExists: Bool, startingURL: URL, destinationURL: URL) throws {
         if !fileExists {
-            let directoryURL = destinationURL.deletingLastPathComponent()
-            try FileManager.default.createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: [:])
+            try FileManager.default.createDirectory(at: destinationURL, withIntermediateDirectories: true, attributes: [:])
         }
 
         switch self {
-        case .onlyWhenNew, .alwaysCopy:
-            _ = try FileManager.default.replaceItemAt(destinationURL, withItemAt: startingURL)
+        case .onlyWhenNew:
+            guard !fileExists else { return }
+            _ = try FileManager.default.copyItem(at: startingURL, to: destinationURL)
+        case .alwaysCopy:
+            if fileExists {
+                try? FileManager.default.removeItem(at: destinationURL)
+            }
+            _ = try FileManager.default.copyItem(at: startingURL, to: destinationURL)
         case .manualCompare(let comparer):
             if let newData = try? Data(contentsOf: startingURL), let currentData = try? Data(contentsOf: destinationURL) {
                 guard comparer(currentData, newData) else { return }
@@ -108,7 +113,7 @@ private extension CopyPolicy {
                 print("Will continue with copy")
             }
 
-            _ = try FileManager.default.replaceItemAt(destinationURL, withItemAt: startingURL)
+            _ = try FileManager.default.copyItem(at: startingURL, to: destinationURL)
         }
     }
 }

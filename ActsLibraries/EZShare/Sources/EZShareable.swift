@@ -14,6 +14,7 @@ import UIKit
 public protocol EZShareable {
     var shareItem: EZShareItem { get }
 }
+
 public protocol EZShareItem {
     var item: Any { get }
     var placeholder: Any { get }
@@ -67,7 +68,6 @@ public struct EZShareData: EZShareItem {
         self.placeholderText = placeholderText
     }
 
-
     public func item(for activityType: UIActivity.ActivityType) -> Any {
         switch (activityType, shareType) {
         case (.mail, .text(let html)):
@@ -91,8 +91,6 @@ public class EZShareProvider: UIActivityItemProvider {
     convenience public init(shareableItem: EZShareable) {
         self.init(shareItem: shareableItem.shareItem)
     }
-
-
 
     public override func activityViewController(_ activityViewController: UIActivityViewController, itemForActivityType activityType: UIActivity.ActivityType?) -> Any? {
         guard let activityType = activityType else { return item }
