@@ -113,7 +113,9 @@ private extension CopyPolicy {
                 print("Could not compare data from \(startingURL) and \(destinationURL)")
                 print("Will continue with copy")
             }
-
+            if fileExists {
+                try? FileManager.default.removeItem(at: destinationURL)
+            }
             _ = try FileManager.default.copyItem(at: startingURL, to: destinationURL)
         }
     }
