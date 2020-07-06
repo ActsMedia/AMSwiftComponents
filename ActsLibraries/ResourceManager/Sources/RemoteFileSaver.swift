@@ -17,13 +17,17 @@ public class RemoteFileSaver {
     private let progressQueue = DispatchQueue(label: "RemoteFileSaverUpdateQueue", qos: .background)
     private var errors: [Error] = []
     private let updateAction: ((URL, Float) -> ())?
+    private let urlChallenge: ((URLSessionTask, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))?
 
     private var canceling = false
     private var runningQueue: OperationQueue?
 
-    public init(resource: [(RemoteResource, CopyPolicy)], completionQueue: DispatchQueue = .main, updateAction: ((URL, Float) -> ())? = nil) {
+    public init(resource: [(RemoteResource, CopyPolicy)], completionQueue: DispatchQueue = .main,
+                urlChallenge: ((URLSessionTask, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))? = nil,
+                updateAction: ((URL, Float) -> ())? = nil) {
         self.resource = resource
         self.completionQueue = completionQueue
+        self.urlChallenge = urlChallenge
         self.updateAction = updateAction
     }
 
@@ -71,7 +75,7 @@ public class RemoteFileSaver {
         newQueue.underlyingQueue = dispatch
         newQueue.maxConcurrentOperationCount = 8
         let operations = resource.map {
-            FileDownloadOperation(remoteResource: $0.0, copyPolicy: $0.1, errorAction: addError(error:), updateAction: sendUpdate)
+            FileDownloadOperation(remoteResource: $0.0, copyPolicy: $0.1, urlChallenge: urlChallenge, errorAction: addError(error:), updateAction: sendUpdate)
         }
         self.runningQueue = newQueue
         newQueue.addOperations(operations, waitUntilFinished: true)

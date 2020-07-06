@@ -9,13 +9,13 @@ import Foundation
 
 open class ProgressDownloader: NSObject, URLSessionDownloadDelegate {
 
-    public static func download(remoteURL: URL, progressAction: ((_ request: URLRequest, _ ratio: Float) -> ())?, completion: @escaping (Result<URL, Error>) -> ()) -> ProgressDownloader {
-        let downloader = ProgressDownloader(urlRequest: URLRequest(url: remoteURL), progressAction: progressAction, completion: completion)
+    public static func download(remoteURL: URL, urlChallenge: ((URLSessionTask, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))? = nil, progressAction: ((_ request: URLRequest, _ ratio: Float) -> ())?, completion: @escaping (Result<URL, Error>) -> ()) -> ProgressDownloader {
+        let downloader = ProgressDownloader(urlRequest: URLRequest(url: remoteURL), urlChallenge: urlChallenge, progressAction: progressAction, completion: completion)
         downloader.download()
         return downloader
     }
-    public static func download(request: URLRequest, progressAction: ((_ request: URLRequest, _ ratio: Float) -> ())?, completion: @escaping (Result<URL, Error>) -> ()) -> ProgressDownloader {
-        let downloader = ProgressDownloader(urlRequest: request, progressAction: progressAction, completion: completion)
+    public static func download(request: URLRequest, urlChallenge: ((URLSessionTask, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))? = nil, progressAction: ((_ request: URLRequest, _ ratio: Float) -> ())?, completion: @escaping (Result<URL, Error>) -> ()) -> ProgressDownloader {
+        let downloader = ProgressDownloader(urlRequest: request, urlChallenge: urlChallenge, progressAction: progressAction, completion: completion)
         downloader.download()
         return downloader
     }
@@ -25,6 +25,7 @@ open class ProgressDownloader: NSObject, URLSessionDownloadDelegate {
 
     private let progressAction: ((_ request: URLRequest, _ ratio: Float) -> ())?
     private let completion: (Result<URL, Error>) -> ()
+    private let urlChallenge: ((URLSessionTask, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))?
 
     private lazy var session : URLSession = {
         let config = URLSessionConfiguration.ephemeral//.background(withIdentifier: remoteURL.absoluteString)
@@ -46,11 +47,12 @@ open class ProgressDownloader: NSObject, URLSessionDownloadDelegate {
         }
     }
 
-    public init(urlRequest: URLRequest, progressAction: ((_ reqest: URLRequest, _ ratio: Float) -> ())?, completion: @escaping (Result<URL, Error>) -> ()) {
+    public init(urlRequest: URLRequest, urlChallenge: ((URLSessionTask, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))? = nil, progressAction: ((_ reqest: URLRequest, _ ratio: Float) -> ())?, completion: @escaping (Result<URL, Error>) -> ()) {
 
         self.progressAction = progressAction
         self.completion = completion
         self.request = urlRequest
+        self.urlChallenge = urlChallenge
         super.init()
         task = session.downloadTask(with: urlRequest)
     }
@@ -106,4 +108,14 @@ open class ProgressDownloader: NSObject, URLSessionDownloadDelegate {
 
         finish(result: .success(location))
     }
+
+    public func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        guard let urlChallenge = urlChallenge else {
+            completionHandler(.performDefaultHandling, nil)
+            return
+        }
+        let result = urlChallenge(task, challenge)
+        completionHandler(result.0, result.1)
+    }
+
 }

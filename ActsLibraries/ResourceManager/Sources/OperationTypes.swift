@@ -41,6 +41,7 @@ internal class FileDownloadOperation: AsyncOperation {
     private let remoteURL: URL
     private let destinationURL: URL
     private let copyPolicy: CopyPolicy
+    private let urlChallenge: ((URLSessionTask, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))?
     private let errorAction: (Error) -> ()
     private let updateAction: ((_ reqest: URLRequest, _ completedRatio: Float) -> ())?
     private var downloader: ProgressDownloader?
@@ -48,11 +49,13 @@ internal class FileDownloadOperation: AsyncOperation {
     init(remoteURL: URL,
          destinationURL: URL,
          copyPolicy: CopyPolicy,
+         urlChallenge: ((URLSessionTask, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))?,
          errorAction: @escaping (Error) -> (),
          updateAction: ((_ reqest: URLRequest, _ completedRatio: Float) -> ())?) {
         self.remoteURL = remoteURL
         self.destinationURL = destinationURL
         self.copyPolicy = copyPolicy
+        self.urlChallenge = urlChallenge
         self.errorAction = errorAction
         self.updateAction = updateAction
     }
@@ -63,7 +66,7 @@ internal class FileDownloadOperation: AsyncOperation {
             completion()
             return
         }
-        downloader = ProgressDownloader.download(remoteURL: remoteURL, progressAction: updateAction) { (result) in
+        downloader = ProgressDownloader.download(remoteURL: remoteURL, urlChallenge: urlChallenge, progressAction: updateAction) { (result) in
             defer { completion() }
 
             switch result {

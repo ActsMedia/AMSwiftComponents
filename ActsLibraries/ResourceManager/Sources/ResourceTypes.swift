@@ -42,11 +42,13 @@ internal extension FileCopyOperation {
 internal extension FileDownloadOperation {
 
     convenience init(remoteResource: RemoteResource, copyPolicy: CopyPolicy,
-        errorAction: @escaping (Error) -> (), updateAction: ((_ remoteURL: URLRequest, _ completedRatio: Float) -> ())?) {
+                     urlChallenge: ((URLSessionTask, URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?))?,
+                     errorAction: @escaping (Error) -> (), updateAction: ((_ remoteURL: URLRequest, _ completedRatio: Float) -> ())?) {
 
         self.init(remoteURL: remoteResource.remoteURL,
                               destinationURL: remoteResource.fileURL,
                               copyPolicy: copyPolicy,
+                              urlChallenge: urlChallenge,
                               errorAction: errorAction,
                               updateAction: updateAction)
     }
