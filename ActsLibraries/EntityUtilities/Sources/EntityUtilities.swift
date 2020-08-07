@@ -8,13 +8,19 @@
 import Foundation
 import CoreData
 
+public protocol SoftDeletable {
+    var shouldDelete: Bool { get }
+}
+
 /// Extension of Identifiable with the additional info needed by a database
 public protocol IdentifiableEntity: Identifiable {
     static var idPropertyName: String { get }
 }
 
 /// Type erased definition of a storage driver
-public protocol EntityStorageDriver { }
+public protocol EntityStorageDriver {
+
+}
 
 /// A Type that can be updated with another Type
 public protocol ModelUpdatable {

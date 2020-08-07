@@ -29,7 +29,9 @@ public extension NSManagedObjectContext {
 
 }
 
-extension NSManagedObjectContext: CoreDataStorageDriver { }
+extension NSManagedObjectContext: CoreDataStorageDriver {
+
+}
 
 /// Default implementation for CoreDataStorageDriver (separated from adherance definition so we only need to declare one `public`)
 public extension NSManagedObjectContext {
@@ -65,6 +67,13 @@ public extension NSManagedObjectContext {
 
     func allObjects<T: NSManagedObject>(of type: T.Type) throws -> [T] {
         try self.fetch(NSFetchRequest<T>(entityName: T.entityName))
+    }
+
+    func softDeleteItems<T: CoreDataEntity>(ofType entityType: T.Type) throws where T: SoftDeletable {
+        let itemsToDelete = try allObjects(of: entityType).filter { $0.shouldDelete }
+        itemsToDelete.forEach(delete)
+        try save()
+
     }
 }
 
