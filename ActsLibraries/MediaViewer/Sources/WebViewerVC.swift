@@ -43,10 +43,10 @@ open class WebViewerVC: UIViewController, WebViewContentUpdatable, WKNavigationD
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-        addWebView()
+        addWebView(webView)
     }
 
-    func addWebView() {
+    open func addWebView(_ webView: WKWebView) {
         webView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(webView)
         view.addConstraints([
