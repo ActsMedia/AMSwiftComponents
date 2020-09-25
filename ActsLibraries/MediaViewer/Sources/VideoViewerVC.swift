@@ -16,6 +16,9 @@ open class VideoViewerVC: AVPlayerViewController, AVPlayerViewControllerDelegate
     public var loadingFinishedAction: (() -> ())?
 
     public var autoPlay: Bool = true
+
+    private var currentURL: URL?
+
     open override func viewDidLoad() {
         super.viewDidLoad()
 ////        delegate = self
@@ -25,6 +28,9 @@ open class VideoViewerVC: AVPlayerViewController, AVPlayerViewControllerDelegate
 //
     }
     open func update(with url: URL) {
+        guard url != currentURL else { return }
+        currentURL = url
+        
         player = AVPlayer(url: url)
         loadingFinishedAction?()
         if autoPlay {

@@ -93,7 +93,6 @@ open class MediaViewerVC<Model: MediaViewerModel>: UIViewController where Model:
         else {
             mediaTypeChanged(with: .empty)
         }
-        updateLoading(to: isLoading)
     }
 
     private func addContainerView() {
@@ -204,6 +203,10 @@ open class MediaViewerVC<Model: MediaViewerModel>: UIViewController where Model:
     //MARK: VC Management
 
     private func setupMediaVC(_ newVC: UIViewController & RemoteResourceLoading) {
+        guard currentVC.self != newVC.self else {
+            // If we're using the same VC, we don't need to do the setup.
+            return
+        }
         resetCurrentVC()
         currentVC = newVC
         newVC.view.backgroundColor = UIColor.black
@@ -220,6 +223,7 @@ open class MediaViewerVC<Model: MediaViewerModel>: UIViewController where Model:
 //        newVC.didMove(toParent: self)
 
         setupLoadingActions(for: newVC)
+        updateLoading(to: isLoading)
     }
 
     private func resetCurrentVC() {
