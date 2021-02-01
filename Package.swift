@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "AMSwiftComponents",
     platforms: [
-        .iOS(.v13),
+        .iOS(.v13), .macOS(.v10_13)
     ],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
@@ -17,13 +17,15 @@ let package = Package(
         .library(name: "EZShare", targets: ["EZShare"]),
         .library(name: "TypeUtilities", targets: ["TypeUtilities"]),
         .library(name: "UIWrappers", targets: ["UIWrappers"]),
-        .library(name: "EntityUtilities", targets: ["EntityUtilities"])
+        .library(name: "EntityUtilities", targets: ["EntityUtilities"]),
+        .library(name: "AMNetworkingStack", targets: ["AMNetworkingStack"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "2.1.0")),
         .package(url: "https://github.com/Quick/Nimble.git", .exact("8.0.2")),
         .package(url: "https://github.com/onevcat/Kingfisher.git", .exact("5.13.2")),
         .package(url: "https://github.com/GottaGetSwifty/SwiftyIB.git", .branch("SPM")),
+        .package(url: "https://github.com/piknotech/SFSafeSymbols.git", .upToNextMajor(from: "2.1.1")),
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
     ],
@@ -64,7 +66,7 @@ let package = Package(
             path: "ActsLibraries/ResourceManager/Tests"),
         .target(
             name: "UIWrappers",
-            dependencies: ["Kingfisher"],
+            dependencies: ["Kingfisher", "SFSafeSymbols"],
             path: "ActsLibraries/UIWrappers/Sources"),
         .testTarget(
             name: "UIWrappersTests",
@@ -74,6 +76,10 @@ let package = Package(
             name: "EntityUtilities",
             dependencies: [],
             path: "ActsLibraries/EntityUtilities/Sources"),
+        .target(
+            name: "AMNetworkingStack",
+            dependencies: [],
+            path: "ActsLibraries/AMNetworkingStack/Sources"),
     ],
     swiftLanguageVersions: [.v5]
 )

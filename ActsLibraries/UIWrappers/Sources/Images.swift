@@ -8,27 +8,25 @@
 import Foundation
 import UIKit
 import Kingfisher
+import SFSafeSymbols
 
 public enum ImageType: Equatable {
     case url(URL)
     case image(UIImage)
     case resource(String)
-    @available(iOS 13.0, macOS 10.15, *)
-    case system(String)
+    case system(SFSymbol)
 
-    @available(iOS 13.0, macOS 10.15, *)
-    public static var placeholderImage: UIImage! {
-        UIImage(systemName: "xmark.square")!
+    private static var placeholderImage: UIImage {
+        UIImage(systemSymbol: .xmarkSquare)
     }
 
-    @available(iOS 13.0, macOS 10.15, *)
     public static let placeholder: ImageType = .image(placeholderImage)
 
-    public static func urlOrPlaceholder(from urlString: String?) -> ImageType {
-        urlString.map { urlOrPlaceholder(from: URL(string: $0)) } ?? .placeholder
+    public static func makeOrPlaceholder(from urlString: String?) -> ImageType {
+        urlString.map { makeOrPlaceholder(from: URL(string: $0)) } ?? .placeholder
     }
 
-    public static func urlOrPlaceholder(from url: URL?) -> ImageType {
+    public static func makeOrPlaceholder(from url: URL?) -> ImageType {
         url.map(ImageType.url) ?? .placeholder
     }
 }
@@ -42,9 +40,9 @@ extension UIImageView {
             image = newImage
         case .resource(let name):
             image = UIImage(named: name)
-        case .system(let name):
+        case .system(let systemSymbol):
             if #available(iOS 13.0, macOS 10.15, *) {
-                image = UIImage(systemName: name)
+                image = UIImage(systemSymbol: systemSymbol)
             } else {
                 assertionFailure("Tried to use a system image on unsupported OS version")
             }
@@ -62,13 +60,8 @@ extension UIButton {
         case .resource(let name):
             guard let image = UIImage(named: name) else { return }
             setImage(image, for: state)
-        case .system(let name):
-            if #available(iOS 13.0, macOS 10.15, *) {
-                guard let image = UIImage(systemName: name) else { return }
-                setImage(image, for: state)
-            } else {
-                assertionFailure("Tried to use a system image on unsupported OS version")
-            }
+        case .system(let systemSymbol):
+            setImage(UIImage(systemSymbol: systemSymbol), for: state)
         }
     }
 }
