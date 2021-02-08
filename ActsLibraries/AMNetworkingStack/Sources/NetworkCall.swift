@@ -41,21 +41,21 @@ public protocol NetworkingProvider {
     var defaultHeaders: [String:String] { get }
 
     /// Simplest version of JSONDecodable networking request
-    func enqueueRequest<Response: Decodable>(_ request: URLRequest, decoder: JSONDecoder, completion: (Result<Response, Error>) -> ())
+    func enqueueRequest<Response: Decodable>(_ request: URLRequest, decoder: JSONDecoder, completion: @escaping (Result<Response, Error>) -> ())
 }
 
 public extension NetworkingProvider {
 
     /// Simplest version of JSONDecodable networking request
     /// uses basic `JSONDecoder()` as `decoder`
-    func enqueueRequest<Response: Decodable>(_ request: URLRequest, completion: (Result<Response, Error>) -> ()) {
+    func enqueueRequest<Response: Decodable>(_ request: URLRequest, completion: @escaping (Result<Response, Error>) -> ()) {
         enqueueRequest(request, decoder: JSONDecoder(), completion: completion)
     }
 
     /// Typical call with a JSONEncodable Body
     func enqueueRequest<Body: Encodable, Response: Decodable>(urlExtension: String, body: Body, method: CallType,
                                                               additionalHeaders: [String:String] = [:], encoder: JSONEncoder = JSONEncoder(),
-                                                              decoder: JSONDecoder = JSONDecoder(), completion: ((Result<Response, Error>) -> ())) {
+                                                              decoder: JSONDecoder = JSONDecoder(), completion: @escaping ((Result<Response, Error>) -> ())) {
         var urlRequest = URLRequest(url: baseURL.appendingPathComponent(urlExtension))
         defaultHeaders.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key)}
         additionalHeaders.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key)}
@@ -72,7 +72,7 @@ public extension NetworkingProvider {
     /// Typical call with no Body
     func enqueueRequest<Response: Decodable>(urlExtension: String, method: CallType,
                                              additionalHeaders: [String:String] = [:],
-                                             decoder: JSONDecoder = JSONDecoder(), completion: ((Result<Response, Error>) -> ())) {
+                                             decoder: JSONDecoder = JSONDecoder(), completion: @escaping ((Result<Response, Error>) -> ())) {
         var urlRequest = URLRequest(url: baseURL.appendingPathComponent(urlExtension))
         defaultHeaders.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key)}
         additionalHeaders.forEach { urlRequest.setValue($0.value, forHTTPHeaderField: $0.key)}
