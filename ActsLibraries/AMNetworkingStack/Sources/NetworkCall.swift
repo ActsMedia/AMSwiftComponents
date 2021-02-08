@@ -47,9 +47,9 @@ public protocol NetworkingProvider {
 public extension NetworkingProvider {
 
     /// Simplest version of JSONDecodable networking request
-    /// decoder default value is a basic `JSONDecoder()`
-    func enqueueRequest<Response: Decodable>(_ request: URLRequest, decoder: JSONDecoder = JSONDecoder(), completion: (Result<Response, Error>) -> ()) {
-        enqueueRequest(request, decoder: decoder, completion: completion)
+    /// uses basic `JSONDecoder()` as `decoder`
+    func enqueueRequest<Response: Decodable>(_ request: URLRequest, completion: (Result<Response, Error>) -> ()) {
+        enqueueRequest(request, decoder: JSONDecoder(), completion: completion)
     }
 
     /// Typical call with a JSONEncodable Body
