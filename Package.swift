@@ -26,6 +26,7 @@ let package = Package(
         .package(url: "https://github.com/onevcat/Kingfisher.git", .exact("5.13.2")),
         .package(url: "https://github.com/GottaGetSwifty/SwiftyIB.git", .branch("SPM")),
         .package(url: "https://github.com/piknotech/SFSafeSymbols.git", .upToNextMajor(from: "2.1.1")),
+        .package(url: "https://github.com/rwbutler/Connectivity.git", .upToNextMajor(from: "5.0.1")),
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
     ],
@@ -78,7 +79,7 @@ let package = Package(
             path: "ActsLibraries/EntityUtilities/Sources"),
         .target(
             name: "AMNetworkingStack",
-            dependencies: [],
+            dependencies: ["Connectivity"],
             path: "ActsLibraries/AMNetworkingStack/Sources"),
     ],
     swiftLanguageVersions: [.v5]
