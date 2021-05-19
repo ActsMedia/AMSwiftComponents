@@ -50,13 +50,25 @@ open class PDFViewerVC: UIViewController, PDFViewDelegate, URLUpdatable {
     //MARK: Update
     open func update(with url: URL) {
         loadingAction?()
-        DispatchQueue.global().async { [weak self] in
-            let newDocument = PDFDocument(url: url)
-            DispatchQueue.main.async {
-                self?.currentDocument = newDocument
+        DispatchQueue.global().async {
+            do {
+                let data = try Data(contentsOf: url)
+
+                if let pdfDocument = PDFDocument(data: data) {
+                    DispatchQueue.main.async {
+                        self.currentDocument = pdfDocument
+                    }
+                } else {
+                    DispatchQueue.main.async {
+                        self.showError()
+                    }
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.showError()
+                }
             }
         }
-
     }
 
     //MARK: Loading
