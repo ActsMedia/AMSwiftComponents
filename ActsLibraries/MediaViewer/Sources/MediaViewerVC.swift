@@ -210,7 +210,7 @@ open class MediaViewerVC<Model: MediaViewerModel>: UIViewController where Model:
         resetCurrentVC()
         currentVC = newVC
         newVC.view.backgroundColor = UIColor.black
-//        newVC.willMove(toParent: self)
+        newVC.willMove(toParent: self)
         newVC.view.translatesAutoresizingMaskIntoConstraints = false
         viewerContainerView.addSubview(newVC.view)
         viewerContainerView.addConstraints([
@@ -219,8 +219,9 @@ open class MediaViewerVC<Model: MediaViewerModel>: UIViewController where Model:
             viewerContainerView.topAnchor.constraint(equalTo: newVC.view.topAnchor),
             viewerContainerView.bottomAnchor.constraint(equalTo: newVC.view.bottomAnchor),
         ])
-//        self.addChild(newVC)
-//        newVC.didMove(toParent: self)
+        
+        addChild(newVC)
+        newVC.didMove(toParent: self)
 
         setupLoadingActions(for: newVC)
         updateLoading(to: isLoading)
@@ -228,7 +229,10 @@ open class MediaViewerVC<Model: MediaViewerModel>: UIViewController where Model:
 
     private func resetCurrentVC() {
         guard currentVC != nil else { return }
+        currentVC?.willMove(toParent: nil)
         currentVC?.view.removeFromSuperview()
+        currentVC?.removeFromParent()
+        currentVC?.didMove(toParent: nil)
         currentVC = nil
     }
 
