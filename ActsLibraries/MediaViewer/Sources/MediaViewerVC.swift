@@ -33,6 +33,7 @@ public protocol ImageTypeUpdatable: RemoteResourceLoading {
 public enum MediaViewerType: Equatable {
     case empty
     case video(URL)
+    case webVideo(URL)
     case pdf(URL)
     case web(WebViewContentType)
     case image(ImageType)
@@ -40,6 +41,7 @@ public enum MediaViewerType: Equatable {
     func isTypeEqual(to other: MediaViewerType?) -> Bool {
         switch (self, other) {
         case (.video, .video),
+             (.webVideo, .webVideo),
              (.pdf, .pdf),
              (.web, .web),
              (.image, .image): return true
@@ -172,6 +174,7 @@ open class MediaViewerVC<Model: MediaViewerModel>: UIViewController where Model:
         switch type {
         case .empty: return
         case .video(let url),
+             .webVideo(let url),
              .pdf(let url): updateViewer(with: url)
         case .web(let webContent): updateViewer(with: webContent)
         case .image(let image): updateViewer(with: image)
@@ -240,6 +243,7 @@ open class MediaViewerVC<Model: MediaViewerModel>: UIViewController where Model:
         switch mediaType {
         case .empty: return makeEmptyVC()
         case .video: return makeVideoVC()
+        case .webVideo: return makeWebVideoVC()
         case .pdf: return makePDFVC()
         case .web: return makeWebVC()
         case .image: return makeImageVC()
@@ -254,6 +258,10 @@ open class MediaViewerVC<Model: MediaViewerModel>: UIViewController where Model:
 
     open func makeVideoVC() -> UIViewController & URLUpdatable {
         return VideoViewerVC()
+    }
+
+    open func makeWebVideoVC() -> UIViewController & URLUpdatable {
+        return WebVideoViewerVC()
     }
 
     open func makePDFVC() -> UIViewController & URLUpdatable {
